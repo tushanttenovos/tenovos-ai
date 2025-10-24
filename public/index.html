@@ -346,10 +346,10 @@
           }
           radioOptions.style.display = 'block'; // Show radio options after all images
         } else {
-          addMessage('Error: Failed to generate image.', false);
+          addMessage('Failed to generate image.', false);
         }
       } catch (error) {
-        addMessage('Error: Unable to connect to server.', false);
+        addMessage('Unable to connect to server.', false);
       }
     });
 
@@ -392,10 +392,10 @@
           if (allSuccessful) {
             addMessage('Assets Uploaded into Tenovos DAM', false);
           } else {
-            addMessage('Error: Some uploads failed.', false);
+            addMessage('Some uploads failed.', false);
           }
         } catch (error) {
-          addMessage('Error: Upload error.', false);
+          addMessage('Upload error.', false);
         }
       } else {
         addMessage('Upload cancelled.', false);
@@ -411,3 +411,4 @@
   </script>
 </body>
 </html>
+
