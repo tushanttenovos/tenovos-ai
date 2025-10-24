@@ -60,7 +60,6 @@ async function getAuthorizationToken() {
 // Proxy endpoint for Nova AI
 // Endpoint to generate image from user text
 app.post('/generate-image', async (req, res) => {
-  console.log("generate image");
   const { text } = req.body;
   const { image } = req.body;
   if (!text) return res.status(400).json({ error: 'Text is required' });
@@ -97,7 +96,7 @@ app.post('/generate-image', async (req, res) => {
         }
       };
     }
-
+  console.log("generate image",api.TENOVOS_AI_URL);
     const response = await fetch(api.TENOVOS_AI_URL, {
       method: 'POST',
       headers: {
@@ -245,4 +244,5 @@ app.get("/health", (req, res) => res.send("✅ Tenovos AI server running"));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+
 
