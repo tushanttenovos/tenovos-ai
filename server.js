@@ -96,7 +96,7 @@ app.post('/generate-image', async (req, res) => {
         }
       };
     }
-  console.log("generate image",api.TENOVOS_AI_URL);
+
     const response = await fetch(api.TENOVOS_AI_URL, {
       method: 'POST',
       headers: {
@@ -106,6 +106,7 @@ app.post('/generate-image', async (req, res) => {
       body: JSON.stringify(payload)
     });
     const data = await response.json();
+    console.log("generate image",data);
     if (data.images) {
       res.json({ base64: data.images });
     } else {
@@ -244,5 +245,6 @@ app.get("/health", (req, res) => res.send("✅ Tenovos AI server running"));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+
 
 
