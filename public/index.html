@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chatbot</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body {
+      background: #f8f9fa; /* Light gray background for a clean look */
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow-x: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .chat-container {
+      max-width: 600px;
+      height: 70vh;
+      max-height: 500px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+      border-radius: 20px;
+      overflow: hidden;
+      background: #fff; /* White background */
+      border: 1px solid #e9ecef;
+    }
+    .chat-header {
+      background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+      box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+    }
+    #chat {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem;
+      background: #fff; /* White background */
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      scroll-behavior: smooth;
+    }
+    #chat::-webkit-scrollbar {
+      width: 8px;
+    }
+    #chat::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+      border-radius: 4px;
+    }
+    .message {
+      padding: 0.75rem 1rem;
+      border-radius: 18px;
+      max-width: 75%;
+      word-wrap: break-word;
+      animation: fadeIn 0.4s ease-in, slideUp 0.4s ease-in;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+    .user-message {
+      background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+      color: white;
+      align-self: flex-end;
+      margin-left: auto;
+      border-bottom-right-radius: 5px;
+    }
+    .bot-message {
+      background: #f8f9fa;
+      color: #333;
+      align-self: flex-start;
+      border-bottom-left-radius: 5px;
+      border: 1px solid #e9ecef;
+    }
+    .image {
+      max-width: 100%;
+      border-radius: 10px;
+      margin-top: 0.5rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    .loading {
+      font-style: italic;
+      color: #666;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      animation: pulse 1.5s infinite;
+    }
+    .loading::before {
+      content: '';
+      width: 1rem;
+      height: 1rem;
+      border: 2px solid #ccc;
+      border-top: 2px solid #007bff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    .input-area {
+      padding: 1rem;
+      background: #fff;
+      border-top: 1px solid #e9ecef;
+    }
+    .file-label {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      border: 2px solid #007bff;
+      border-radius: 20px;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      white-space: nowrap;
+      font-weight: 500;
+      color: #007bff;
+    }
+    .file-label:hover {
+      background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+      border: none;
+      border-radius: 20px;
+      padding: 0.5rem 1.25rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 123, 255, 0.5);
+    }
+    #radio-options {
+      display: none;
+      padding: 1rem;
+      background: #f8f9fa;
+      border-top: 1px solid #e9ecef;
+      text-align: center;
+    }
+    .btn-group .btn {
+      border-radius: 18px !important;
+      margin: 0 0.25rem;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideUp {
+      from { transform: translateY(15px); }
+      to { transform: translateY(0); }
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    @media (max-width: 768px) {
+      .chat-container {
+        height: 80vh;
+        border-radius: 0;
+        margin: 0;
+      }
+      .chat-header {
+        padding: 0.75rem;
+        font-size: 1rem;
+      }
+      #chat {
+        padding: 0.75rem;
+        gap: 0.5rem;
+      }
+      .message {
+        max-width: 90%;
+        padding: 0.5rem 0.75rem;
+      }
+      .input-area {
+        padding: 0.75rem;
+      }
+      .file-label, .btn-primary {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+      }
+      .btn-group {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .btn-group .btn {
+        margin: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container-fluid d-flex justify-content-center align-items-center">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-12 col-lg-12 d-flex justify-content-center">
+        <div class="card chat-container d-flex flex-column shadow-lg">
+          <div class="chat-header">
+            <i class="bi bi-robot me-2"></i>Tenovos Content Creator AI
+          </div>
+          <div id="chat" class="flex-grow-1" aria-live="polite" aria-label="Chat messages"></div>
+          <div class="input-area">
+            <div class="row g-2 align-items-center flex-nowrap">
+              <div class="col">
+                <input type="text" id="user-input" class="form-control form-control-lg" placeholder="Type your message..." style="border-radius: 25px; border: 2px solid #e9ecef;" aria-label="Enter text">
+              </div>
+              <div class="col-auto">
+                <input type="file" id="image-input" accept="image/*" class="d-none">
+                <label for="image-input" class="file-label" data-bs-toggle="tooltip" data-bs-placement="top" title="Upload an image">
+                  <i class="bi bi-paperclip"></i> Choose File
+                </label>
+              </div>
+              <div class="col-auto">
+                <button id="submit-btn" class="btn btn-primary btn-lg" aria-label="Send message">
+                  <i class="bi bi-send-fill"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div id="radio-options">
+            <p class="mb-3 fw-bold text-primary">Do you want to upload the image to Tenovos DAM?</p>
+            <div class="d-flex justify-content-center align-items-center gap-2">
+              <div class="btn-group" role="group" aria-label="Upload options">
+                <input type="radio" class="btn-check" name="upload" id="yes" value="yes" autocomplete="off">
+                <label class="btn btn-outline-success" for="yes"><i class="bi bi-check-circle"></i> Yes</label>
+                <input type="radio" class="btn-check" name="upload" id="no" value="no" autocomplete="off">
+                <label class="btn btn-outline-danger" for="no"><i class="bi bi-x-circle"></i> No</label>
+              </div>
+              <button id="confirm-btn" class="btn btn-primary" disabled aria-label="Confirm choice">
+                <i class="bi bi-check2"></i> Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Initialize tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    const chat = document.getElementById('chat');
+    const userInput = document.getElementById('user-input');
+    const imageInput = document.getElementById('image-input');
+    const submitBtn = document.getElementById('submit-btn');
+    const radioOptions = document.getElementById('radio-options');
+    const confirmBtn = document.getElementById('confirm-btn');
+    let currentBase64 = null;
+
+    // Function to add a message to the chat
+    function addMessage(text, isUser = false, isImage = false) {
+      const msg = document.createElement('div');
+      msg.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+      if (isImage) {
+        msg.innerHTML = `<img src="data:image/png;base64,${text}" class="image" alt="Generated or uploaded image">`;
+      } else {
+        msg.textContent = text;
+      }
+      chat.appendChild(msg);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    // Function to read file as base64
+    function readFileAsBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(',')[1]); // Remove data:image/... prefix
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Enable/disable confirm button based on radio selection
+    document.querySelectorAll('input[name="upload"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        confirmBtn.disabled = !document.querySelector('input[name="upload"]:checked');
+      });
+    });
+
+    // Step 1: Submit text and/or image
+    submitBtn.addEventListener('click', async () => {
+      const text = userInput.value.trim();
+      const file = imageInput.files[0];
+
+      if (!text && !file) {
+        alert('Please enter text or upload an image.');
+        return;
+      }
+
+      // Display user input
+      if (text) addMessage(text, true);
+      let base64 = null;
+      if (file) {
+        // Validate image type
+        if (!file.type.startsWith('image/')) {
+          alert('Please upload a valid image file.');
+          return;
+        }
+        base64 = await readFileAsBase64(file);
+        addMessage(base64, true, true); // Display uploaded image
+      }
+
+      // Prepare payload for API (text and/or image)
+      const payload = {};
+      if (text) payload.text = text;
+      if (base64) payload.image = base64;
+
+      // Always call API if there's input (text or image or both)
+      userInput.value = '';
+      imageInput.value = ''; // Reset file input
+      addMessage('Generating image...', false);
+
+      try {
+        const response = await fetch('/generate-image', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+        if (data.base64) {
+          // Handle single image (string) or multiple images (array)
+          if (Array.isArray(data.base64)) {
+            // Multiple images
+            data.base64.forEach(imgBase64 => addMessage(imgBase64, false, true));
+            currentBase64 = data.base64; // Store array
+          } else {
+            // Single image
+            addMessage(data.base64, false, true);
+            currentBase64 = data.base64; // Store string
+          }
+          radioOptions.style.display = 'block'; // Show radio options after all images
+        } else {
+          addMessage('Error: Failed to generate image.', false);
+        }
+      } catch (error) {
+        addMessage('Error: Unable to connect to server.', false);
+      }
+    });
+
+    // Step 4-5: Handle radio selection and upload
+    confirmBtn.addEventListener('click', async () => {
+      const selected = document.querySelector('input[name="upload"]:checked');
+      if (!selected) {
+        alert('Please select Yes or No.');
+        return;
+      }
+      radioOptions.style.display = 'none';
+
+      if (selected.value === 'yes' && currentBase64) {
+        addMessage('Uploading image(s)...', false);
+        try {
+          let uploadPromises = [];
+          if (Array.isArray(currentBase64)) {
+            // Upload multiple images
+            uploadPromises = currentBase64.map(img => 
+              fetch('/upload-to-dam', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ base64Image: img })
+              })
+            );
+          } else {
+            // Upload single image
+            uploadPromises = [
+              fetch('/upload-to-dam', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ base64Image: currentBase64 })
+              })
+            ];
+          }
+
+          // Wait for all uploads
+          const responses = await Promise.all(uploadPromises);
+          const allSuccessful = responses.every(res => res.ok);
+          if (allSuccessful) {
+            addMessage('Assets Uploaded into Tenovos DAM', false);
+          } else {
+            addMessage('Error: Some uploads failed.', false);
+          }
+        } catch (error) {
+          addMessage('Error: Upload error.', false);
+        }
+      } else {
+        addMessage('Upload cancelled.', false);
+      }
+      currentBase64 = null;
+
+      // Clear the radio selection and disable confirm button
+      document.querySelectorAll('input[name="upload"]').forEach(radio => {
+        radio.checked = false;
+      });
+      confirmBtn.disabled = true;
+    });
+  </script>
+</body>
+</html>
