@@ -16,17 +16,17 @@ app.use(express.json({ limit: '25mb' }));
 app.use(express.static(path.join(__dirname, "public")));
 
 const config = {
-  clientId: 'vq7ap3qlqlvq077b7kehm0nnr',
-  username: 'tushant.vijay',
-  password: 'S!fy@123!',
-  API_KEY: 'ZObZ3Sfdx08hNIvJhgm5d610kdr7EX635gLKKy5f'
+  clientId: '',
+  username: '',
+  password: '',
+  API_KEY: ''
 };
 
 const api = {
-  AUTH_URL: 'https://demo.services.tenovos.io/content-store-v1/auth/token',
-  UPLOAD_URL: 'https://api.tenovos.io/v1/assets/asset',
-  TENOVOS_AI_URL: 'https://bedrock-runtime.us-east-1.amazonaws.com/model/amazon.nova-canvas-v1:0/invoke',
-  COMPLETE_UPLOAD: 'https://api.tenovos.io/v1/asset/complete'
+  AUTH_URL: '',
+  UPLOAD_URL: '',
+  TENOVOS_AI_URL: '',
+  COMPLETE_UPLOAD: ''
 };
 
 // Async function to get authorization token
@@ -101,7 +101,7 @@ app.post('/generate-image', async (req, res) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ABSKQmVkcm9ja0FQSUtleS04anJvLWF0LTY5MjI4NTIzNTE3NTpBd2MzQXRVQ0hDTk5Sell0VERWaWNlclNpYzFTUGw1UHJ1U1Q2bjA5T21QbHdseU1kV1VUMFovdjQ2UT0=' // Add your Bearer token here
+        'Authorization': 'Bearer ' // Add your Bearer token here
       },
       body: JSON.stringify(payload)
     });
@@ -245,6 +245,7 @@ app.get("/health", (req, res) => res.send("✅ Tenovos AI server running"));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+
 
 
 
